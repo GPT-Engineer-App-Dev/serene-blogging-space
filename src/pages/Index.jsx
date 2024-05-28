@@ -1,7 +1,16 @@
-import { Box, Container, Flex, Heading, Text, VStack, Link, HStack } from "@chakra-ui/react";
+import { Box, Container, Flex, Heading, Text, VStack, Link, HStack, Image } from "@chakra-ui/react";
 import { FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(storedPosts);
+  }, []);
+
   return (
     <Box>
       <Box as="header" bg="brand.800" color="white" py={4}>
@@ -9,7 +18,8 @@ const Index = () => {
           <Flex justify="space-between" align="center">
             <Heading as="h1" size="lg">My Blog</Heading>
             <HStack spacing={4}>
-              <Link href="#home" color="white">Home</Link>
+              <Link as={RouterLink} to="/" color="white">Home</Link>
+              <Link as={RouterLink} to="/add-post" color="white">Add Post</Link>
               <Link href="#about" color="white">About</Link>
               <Link href="#contact" color="white">Contact</Link>
             </HStack>
@@ -19,14 +29,13 @@ const Index = () => {
 
       <Container maxW="container.lg" py={8}>
         <VStack spacing={8} align="stretch">
-          <Box as="article" p={5} shadow="md" borderWidth="1px">
-            <Heading as="h2" size="md">First Blog Post</Heading>
-            <Text mt={4}>This is the content of the first blog post. It's a great place to share your thoughts and ideas.</Text>
-          </Box>
-          <Box as="article" p={5} shadow="md" borderWidth="1px">
-            <Heading as="h2" size="md">Second Blog Post</Heading>
-            <Text mt={4}>This is the content of the second blog post. Keep writing and sharing your stories.</Text>
-          </Box>
+          {posts.map((post, index) => (
+            <Box as="article" p={5} shadow="md" borderWidth="1px" key={index}>
+              <Heading as="h2" size="md">{post.title}</Heading>
+              {post.image && <Image src={post.image} alt={post.title} mt={4} />}
+              <Text mt={4}>{post.content}</Text>
+            </Box>
+          ))}
         </VStack>
       </Container>
 
